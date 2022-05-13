@@ -14,6 +14,18 @@ func NetInfo() {
 
 	//获得所有网络接口的名字和状态之类的
 	fmt.Println(net.Interfaces())
+
+	//获得所有网络接口的名字和状态之类的
+	//fmt.Println(net.ConntrackStats(fals))
+}
+
+//返回所有网络接口信息
+func NetInterfacesInfo() net.InterfaceStatList {
+	list, err := net.Interfaces()
+	if err != nil {
+		fmt.Println(err)
+	}
+	return list
 }
 
 type NetworkIORates struct {
