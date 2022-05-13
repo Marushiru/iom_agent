@@ -38,12 +38,11 @@ func CpuInfo() map[string]any {
 	}
 
 	cpuInfoMap["timeStats"] = timeStats
-	fmt.Println(cpuInfoMap)
 	return cpuInfoMap
 }
 
 //TODO
-func cpuUsagePercentage(duration time.Duration) {
+func CpuUsagePercentage(duration time.Duration) {
 	//获取Cpu使用百分比
 	//其中interval单位是1纳秒
 	for {
