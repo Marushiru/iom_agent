@@ -6,6 +6,9 @@ import (
 )
 
 func main() {
-	a := device.MemoryInfo()
-	fmt.Println(a)
+	//a := device.MemoryInfo()
+	b := device.DiskInfo()
+	//c, _ := disk.Usage("\\\\wsl$\\Ubuntu-18.04")
+	//fmt.Println(c)
+	fmt.Println(b)
 }
