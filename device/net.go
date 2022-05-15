@@ -7,16 +7,14 @@ import (
 )
 
 func NetInfo() {
-	//类似windows下的netstats命令返回的格式
-	//fmt.Println(net.Connections("all"))
 
-	//fmt.Println(net.ConnectionsPidWithoutUids("all", 5836))
+	counter, err := net.IOCounters(true)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("网络接口流量:", counter)
 
-	//获得所有网络接口的名字和状态之类的
-	fmt.Println(net.Interfaces())
-
-	//获得所有网络接口的名字和状态之类的
-	//fmt.Println(net.ConntrackStats(fals))
+	fmt.Println("网络接口信息:", NetInterfacesInfo())
 }
 
 //返回所有网络接口信息
