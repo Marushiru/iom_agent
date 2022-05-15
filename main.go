@@ -8,7 +8,9 @@ import (
 func main() {
 	//a := device.MemoryInfo()
 	b := device.DiskInfo()
-	//c, _ := disk.Usage("\\\\wsl$\\Ubuntu-18.04")
+	//c, _ := disk.Usage("/etc")
 	//fmt.Println(c)
+	//fmt.Println(runtime.GOOS)
 	fmt.Println(b)
+	//device.DiskUsage()
 }
