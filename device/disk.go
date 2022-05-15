@@ -11,10 +11,18 @@ func DiskInfo() map[string]any {
 			windows下rw是可读写 ro是只读 compress是这个盘石压缩卷
 	*/
 	var diskInfoMap map[string]any = make(map[string]any)
-	partitionsStat, _ := disk.Partitions(true)
-	diskInfoMap["partitionsStat"] = partitionsStat
-	usageStat, _ := disk.Usage("/")
-	diskInfoMap["usageStat"] = usageStat
+	partitionsStat, err := disk.Partitions(true)
+	if err == nil {
+		diskInfoMap["partitionsStat"] = partitionsStat
+	} else {
+		diskInfoMap["partitionsStat"] = nil
+	}
+	usageStat, err := disk.Usage("/")
+	if err == nil {
+		diskInfoMap["usageStat"] = usageStat
+	} else {
+		diskInfoMap["usageStat"] = nil
+	}
 	//ioCounter, _ := disk.IOCounters()
 	//diskInfoMap["IOCounter"] = ioCounter
 
