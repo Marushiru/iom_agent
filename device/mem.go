@@ -3,6 +3,7 @@ package device
 import (
 	"fmt"
 	"github.com/shirou/gopsutil/v3/mem"
+	"strconv"
 )
 
 func MemoryInfo() map[string]any {
@@ -28,4 +29,12 @@ func MemoryInfo() map[string]any {
 	}
 
 	return memoryInfoMap
+}
+func PrintMemoryInfo() {
+	memoryInfo := MemoryInfo()["memoryStat"]
+	memInfo := memoryInfo.(*mem.VirtualMemoryStat)
+	fmt.Println("总内存:  ", strconv.FormatFloat(float64(memInfo.Total)/1024/1024, 'f', 2, 32), "MB")
+	fmt.Println("已用内存: ", strconv.FormatFloat(float64(memInfo.Used)/1024/1024, 'f', 2, 32), "MB")
+	fmt.Println("剩余内存: ", strconv.FormatFloat(float64(memInfo.Available)/1024/1024, 'f', 2, 32), "MB")
+	fmt.Println("已用百分比: ", strconv.FormatFloat(memInfo.UsedPercent, 'f', 2, 32), "%")
 }
