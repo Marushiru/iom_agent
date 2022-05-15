@@ -1,3 +1,6 @@
+//go:build windows && amd64
+// +build windows,amd64
+
 package device
 
 import (
@@ -6,7 +9,6 @@ import (
 )
 
 func WinServicesInfo() {
-
 	//列出所有的service
 	services, err := winservices.ListServices()
 	if err != nil {
