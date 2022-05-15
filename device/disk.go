@@ -80,7 +80,7 @@ func DiskUsage() map[string]map[string]any {
 func PrintDiskInfo() {
 	diskInfo := DiskInfo()["diskUsage"]
 	diskInfoMap := diskInfo.(map[string]map[string]any)
-	fmt.Println(diskInfoMap)
+	//fmt.Println(diskInfoMap)
 	for k, v := range diskInfoMap {
 		total := v["total"].(uint64)
 		free := v["free"].(uint64)

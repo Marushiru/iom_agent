@@ -1,12 +1,15 @@
 package main
 
-import "github.com/Marushiru/iom_agent/device"
 import (
 	"fmt"
 	"github.com/Marushiru/iom_agent/device"
 )
 
 func main() {
+	fmt.Println("==============================================MEM==============================================")
+	device.PrintMemoryInfo()
+	fmt.Println("==============================================DISK==============================================")
+	device.PrintDiskInfo()
 	fmt.Println("==============================================CPU==============================================")
 	device.CpuInfo()
 	fmt.Println("==============================================HOST==============================================")
@@ -19,9 +22,6 @@ func main() {
 		fmt.Println("==============================================WINSERVICES==============================================")
 		device.WinServicesInfo()
 	}
-	device.PrintMemoryInfo()
-	device.PrintDiskInfo()
 	device.DockerInfo()
-	//device.PrintMemoryInfo()
 
 }
