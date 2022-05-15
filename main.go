@@ -2,15 +2,23 @@ package main
 
 import (
 	"fmt"
-	"github.com/Marushiru/iom_agent/device"
+	"github.com/shirou/gopsutil/v3/disk"
 )
 
 func main() {
 	//a := device.MemoryInfo()
-	b := device.DiskInfo()
-	//c, _ := disk.Usage("/etc")
-	//fmt.Println(c)
+	//c, _ := disk.Usage("C:")
+	//d, _ := disk.Usage("D:")
+	e, _ := disk.Usage("E:")
+	all, _ := disk.Usage("\\")
+	//fmt.Println(c.Total)
+	//fmt.Println(d.Total)
+	fmt.Println(e.Total)
+	//total := c.Total + d.Total + e.Total
+	//fmt.Println(total)
+	fmt.Println(all.Total)
 	//fmt.Println(runtime.GOOS)
-	fmt.Println(b)
+	//b := device.DiskInfo()
+	//fmt.Println(b)
 	//device.DiskUsage()
 }

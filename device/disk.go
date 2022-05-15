@@ -2,7 +2,6 @@ package device
 
 import (
 	"github.com/shirou/gopsutil/v3/disk"
-	"path/filepath"
 	"runtime"
 	"strings"
 )
@@ -22,6 +21,7 @@ func DiskInfo() map[string]any {
 	} else {
 		diskInfoMap["partitionsStat"] = nil
 	}
+	//TODO 这里用 "/" 获取不到windows的整个硬盘的大小
 	usageStat, err := disk.Usage("/")
 	if err == nil {
 		diskInfoMap["usageStat"] = usageStat
@@ -35,8 +35,8 @@ func DiskInfo() map[string]any {
 }
 
 //按磁盘分区获取容量
-func DiskUsage() map[string]map[string]int {
-	diskUsage := make(map[string]map[string]int)
+func DiskUsage() map[string]map[string]uint64 {
+	diskUsage := make(map[string]map[string]uint64)
 	diskPartitions := []string{}
 	OSType := runtime.GOOS
 	//if windows 获取Windows各个盘符
@@ -50,23 +50,21 @@ func DiskUsage() map[string]map[string]int {
 		}
 		for _, i := range diskPartitions {
 			usage, _ := disk.Usage(i)
-			diskUsage[i] = make(map[string]int)
-			diskUsage[i]["total"] = int(usage.Total)
-			diskUsage[i]["used"] = int(usage.Used)
-			diskUsage[i]["free"] = int(usage.Free)
-			diskUsage[i]["usedPercent"] = int(usage.UsedPercent)
+			diskUsage[i] = make(map[string]uint64)
+			diskUsage[i]["total"] = usage.Total
+			diskUsage[i]["used"] = usage.Used
+			diskUsage[i]["free"] = usage.Free
+			diskUsage[i]["usedPercent"] = uint64(usage.UsedPercent)
 		}
 	} else if strings.ToLower(OSType) == "linux" {
 		//获取 "/" 目录下所有文件(夹)名
-		diskPartitions, _ = filepath.Glob("/*")
-		for _, i := range diskPartitions {
-			usage, _ := disk.Usage(i)
-			diskUsage[i] = make(map[string]int)
-			diskUsage[i]["total"] = int(usage.Total)
-			diskUsage[i]["used"] = int(usage.Used)
-			diskUsage[i]["free"] = int(usage.Free)
-			diskUsage[i]["usedPercent"] = int(usage.UsedPercent)
-		}
+		diskUsage["/"] = make(map[string]uint64)
+		usage, _ := disk.Usage("/")
+		diskUsage["/"]["total"] = usage.Total
+		diskUsage["/"]["used"] = usage.Used
+		diskUsage["/"]["free"] = usage.Free
+		diskUsage["/"]["usedPercent"] = uint64(usage.UsedPercent)
+
 	}
 	//fmt.Println(diskUsage)
 	return diskUsage
