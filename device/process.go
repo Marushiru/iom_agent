@@ -3,101 +3,115 @@ package device
 import (
 	"fmt"
 	"github.com/shirou/gopsutil/v3/process"
+	"strconv"
+	"syscall"
 )
 
-type proc process.Process
+type Proc process.Process
 
 func ProcessInfo() {
 
 	//只返回了Pids 啥都没
-	fmt.Println(process.Pids())
-	//只返回了Process对象，对象只包含了pid 啥都没
-	fmt.Println(process.Processes())
+	//process.Pids()
+	proc, err := process.Processes()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(proc)
+	fmt.Println("输入你想要查看的pid:")
+	var pidSt string
+	fmt.Scan(&pidSt)
+	pid, _ := strconv.Atoi(pidSt)
+	pro, _ := process.NewProcess(int32(pid))
 
-	pro, _ := process.NewProcess(1484)
 	//返回进程名
-	fmt.Println(pro.Name())
-	//Cpu占用百分比
-	fmt.Println(pro.CPUPercent())
-	//进程创建时间，13位时间戳
-	fmt.Println(pro.CreateTime())
-	//返回Exe文件目录
-	fmt.Println(pro.Exe())
-	//进程工作路径？
-	fmt.Println(pro.Cwd())
-	//返回应用网络流量使用情况？
-	fmt.Println(pro.IOCounters())
+	name, _ := pro.Name()
+	fmt.Println("进程名：" + name)
 	//返回进程是否还在运行
-	fmt.Println(pro.IsRunning())
+	isRunning, _ := pro.IsRunning()
+	fmt.Println("运行状态：" + strconv.FormatBool(isRunning))
+
+	//返回进程优先级
+	nice, _ := pro.Nice()
+	fmt.Println("优先级：", nice)
+	//返回进程的用户名
+	username, _ := pro.Username()
+	fmt.Println("用户名：" + username)
+	//进程工作路径
+	cwd, _ := pro.Cwd()
+	fmt.Println("工作路径：" + cwd)
+
+	//返回Exe文件目录
+	exe, _ := pro.Exe()
+	fmt.Println("执行文件路径：" + exe)
 	//进程位置和其命令
-	fmt.Println(pro.Cmdline())
-	//进程位置和其命令 拆分成切片
-	fmt.Println(pro.CmdlineSlice())
+	cmd, _ := pro.Cmdline()
+	fmt.Println("执行文件命令：" + cmd)
+
+	//进程创建时间，13位时间戳
+	create, _ := pro.Cmdline()
+	fmt.Println("创建时间戳：" + create)
+
+	//TODO 写一个按照时间显示的方法
+	//Cpu占用百分比
+	cpuPercent, _ := pro.CPUPercent()
+	fmt.Println("Cpu占用率：" + strconv.FormatFloat(cpuPercent, 'f', 2, 64))
+	//返回应用网络流量使用情况？
+	ioCounters, _ := pro.IOCounters()
+	fmt.Println("流量使用情况：", ioCounters)
+	//进程使用的内存，rss用掉的物理内存，vms用掉的虚拟内存
+
+	memoryInfo, _ := pro.MemoryInfo()
+	fmt.Println("内存使用情况：", memoryInfo)
+	fmt.Println(pro.MemoryInfo())
+
 	//内存占用比例
+	memoryPercent, _ := pro.MemoryPercent()
+	fmt.Println("内存占用率：", memoryPercent)
 	fmt.Println(pro.MemoryPercent())
+
 	//返回父进程的id
-	fmt.Println(pro.Ppid())
-	//子进程？
-	fmt.Println(pro.Children())
-	//返回父进程，调用newprocess大概？
-	fmt.Println(pro.Parent())
+	//ppid, _ := pro.Ppid()
+
+	//返回父进程，返回的是process对象
+	parent, _ := pro.Parent()
+	fmt.Println("父进程ID：", parent)
+
+	//子进程，返回process切片
+	childrens, _ := pro.Children()
+	fmt.Println("子进程ID：", childrens)
 
 	//进程相关的网络请求
-	fmt.Println(pro.Connections())
+	connections, _ := pro.Connections()
+	fmt.Println("线程网络连接:", connections)
 
-	//相关系统环境变量
-	fmt.Println(pro.Environ())
-	//返回应用是否在前台。win没实现
-	fmt.Println(pro.Foreground())
-	//返回IO优先级？？win没有实现
-	fmt.Println(pro.IOnice())
+}
 
-	//内存表WIN没实现
-	fmt.Println(pro.MemoryMaps(false))
-	fmt.Println(pro.MemoryMaps(true))
+func WinNotImplement() {
 
-	//是否后台，win没实现
-	fmt.Println(pro.Background())
-	//返回进程优先级
-	fmt.Println(pro.Nice())
+}
 
-	//返回应用groupId，win没实现
-	fmt.Println(pro.Gids())
-	//返回应用groupId(包括补充组？)，win没实现
-	fmt.Println(pro.Groups())
-	//windows没有实现，返回进程的uid
-	fmt.Println(pro.Uids())
+//继续程序
+func (p *Proc) Resume() {
+	p.Resume()
+}
 
-	//返回资源限制？win没有实现
-	fmt.Println(pro.Rlimit())
-	//返回终端》？？？win没实现
-	fmt.Println(pro.Terminal())
-	//返回进程状态？win没有实现
-	fmt.Println(pro.Status())
+//停止程序
+func (p *Proc) Suspend() {
+	p.Suspend()
+}
 
-	//发送继续信号
-	//fmt.Println(pro.Resume())
-	//发送进程暂停信号？win实现了
-	//fmt.Println(pro.Suspend())
-	//发送进程中止信号
-	//fmt.Println(pro.Terminate())
-	//杀死进程
-	//fmt.Println(pro.Kill())
-	//发送UNIX信号到进程  syscall.Signal自己写，win没实现大概
-	//fmt.Println(pro.SendSignal())
+//中止程序
+func (p *Proc) Terminate() {
+	p.Terminate()
+}
 
-	//返回线程组ID？
-	fmt.Println(pro.Tgid())
+//杀掉程序
+func (p *Proc) Kill() {
+	p.Kill()
+}
 
-	//返回线程
-	fmt.Println(pro.Threads())
-	//返回线程
-	fmt.Println(pro.Times())
-	//返回进程的用户名
-	fmt.Println(pro.Username())
-
-	//rss用掉的物理内存，vms用掉的虚拟内存
-	fmt.Println(pro.MemoryInfo())
-	//杀死RSS,VMS???win没实现
-	fmt.Println(pro.MemoryInfoEx())
+//发送需要的命令
+func (p *Proc) SendSignal(signal syscall.Signal) {
+	p.SendSignal(signal)
 }
