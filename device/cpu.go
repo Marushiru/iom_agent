@@ -3,86 +3,86 @@ package device
 import (
 	"fmt"
 	"github.com/shirou/gopsutil/v3/cpu"
+	"strconv"
 	"time"
 )
 
-func CpuInfo() map[string]any {
+func PrintCpuInfo() {
 
-	var cpuInfoMap map[string]any = make(map[string]any)
-
+	PhysicalCores()
+	fmt.Println()
+	LogicalCores()
+	fmt.Println()
+	CpuInfo()
+	fmt.Println()
+	CpuUsagePercentage(1000000000)
+	fmt.Println()
+}
+func PhysicalCores() int {
 	//获取Cpu实体核心数量
 	physicalCores, err := cpu.Counts(false)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Cpu实体核心数量", physicalCores)
-	cpuInfoMap["physicalCores"] = physicalCores
+	fmt.Println("Cpu实体核心数量: ", physicalCores, "核")
+	return physicalCores
+}
 
+func LogicalCores() int {
 	//获取Cpu虚拟核心数量
 	logicalCores, err := cpu.Counts(true)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Cpu虚拟核心数量", logicalCores)
-	cpuInfoMap["logicalCores"] = logicalCores
+	fmt.Println("Cpu虚拟核心数量: ", logicalCores, "核")
+	return logicalCores
+}
 
-	//type InfoStat struct {
-	//	CPU        int32    `json:"cpu"`
-	//	VendorID   string   `json:"vendorId"`
-	//	Family     string   `json:"family"`
-	//	Model      string   `json:"model"`
-	//	Stepping   int32    `json:"stepping"`
-	//	PhysicalID string   `json:"physicalId"`
-	//	CoreID     string   `json:"coreId"`
-	//	Cores      int32    `json:"cores"`
-	//	ModelName  string   `json:"modelName"`
-	//	Mhz        float64  `json:"mhz"`
-	//	CacheSize  int32    `json:"cacheSize"`
-	//	Flags      []string `json:"flags"`
-	//	Microcode  string   `json:"microcode"`
-	//}
+//type InfoStat struct {
+//	CPU        int32    `json:"cpu"` 		 Cpu基础信息
+//	VendorID   string   `json:"vendorId"`	 厂家标识
+//	Family     string   `json:"family"` 	 Cpu系列
+//	Model      string   `json:"model"` 		 Cpu代号
+//	Stepping   int32    `json:"stepping"` 	 更新版本
+//	PhysicalID string   `json:"physicalId"`  物理核编号
+//	CoreID     string   `json:"coreId"`		 物理Cpu标号
+//	Cores      int32    `json:"cores"` 		 核心数
+//	ModelName  string   `json:"modelName"`   Cpu全称
+//	Mhz        float64  `json:"mhz"` 		 主频
+//	CacheSize  int32    `json:"cacheSize"`   二级缓存
+//	Flags      []string `json:"flags"`		 支持
+//	Microcode  string   `json:"microcode"`	 微指令
+//}
+
+func CpuInfo() []cpu.InfoStat {
 	//获取Cpus的信息
 	infoStats, err := cpu.Info()
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Cpu基础信息", infoStats)
-	cpuInfoMap["infoStats"] = infoStats
 
-	//获取Cpu时间???
-
-	//type TimesStat struct {
-	//	CPU       string  `json:"cpu"`
-	//	User      float64 `json:"user"`
-	//	System    float64 `json:"system"`
-	//	Idle      float64 `json:"idle"`
-	//	Nice      float64 `json:"nice"`
-	//	Iowait    float64 `json:"iowait"`
-	//	Irq       float64 `json:"irq"`
-	//	Softirq   float64 `json:"softirq"`
-	//	Steal     float64 `json:"steal"`
-	//	Guest     float64 `json:"guest"`
-	//	GuestNice float64 `json:"guestNice"`
-	//}
-	timeStats, err := cpu.Times(true)
-	if err != nil {
-		fmt.Println(err)
+	for _, j := range infoStats {
+		fmt.Println("Cpu基础信息")
+		fmt.Println("核心 ", j.CPU, "\t", "Cpu系列：", j.Family, "\t", "Cpu代号：", j.Model, "\t", "厂家标识：", j.VendorID, "\t")
+		fmt.Println("更新版本：", j.Stepping, "\t", "物理核编号: ", j.CoreID, "\t", "核心数: ", j.Cores, "\t", "物理Cpu标号: ", j.PhysicalID, "\t")
+		fmt.Println("主频:", j.Mhz, "\t", "二级缓存:", j.CacheSize, "\t", "微指令:", j.Microcode, "\t", "支持:", j.Flags, "\t")
+		println("Cpu全称:", j.ModelName, "\t")
 	}
-	fmt.Println("Cpu时间信息", timeStats)
-	cpuInfoMap["timeStats"] = timeStats
 
-	CpuUsagePercentage(1000000000)
-
-	return cpuInfoMap
+	return infoStats
 }
 
 //TODO
-func CpuUsagePercentage(duration time.Duration) {
+func CpuUsagePercentage(duration time.Duration) []float64 {
 	//获取Cpu使用百分比
 	//其中interval单位是1纳秒
-	//for {
+	fmt.Println("核心使用率")
 	perPrecent, _ := cpu.Percent(duration, true)
-	fmt.Println("Cpu使用率信息", perPrecent)
-	//time.Sleep(1000000000)
-	//}
+	for i, j := range perPrecent {
+		if i%4 == 0 && i != 0 {
+			fmt.Println()
+		}
+		fmt.Print("核心 ", i, "\t", strconv.FormatFloat(j, 'f', 2, 64), "\t\t")
+	}
+	return perPrecent
 }
