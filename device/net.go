@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func NetInfo() {
+func PrintNetInfo() {
 	IOCountersInfo()
 	NetInterfacesInfo()
 
