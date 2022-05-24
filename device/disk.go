@@ -1,6 +1,7 @@
 package device
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/shirou/gopsutil/v3/disk"
 	"runtime"
@@ -34,15 +35,23 @@ func DiskInfo() map[string]any {
 	} else {
 		diskInfoMap["usageStat"] = nil
 	}
-	diskInfoMap["diskUsage"] = DiskUsage()
+	//diskInfoMap["diskUsage"] = DiskUsage()
 	//ioCounter, _ := disk.IOCounters()
 	//diskInfoMap["IOCounter"] = ioCounter
 	return diskInfoMap
 }
 
+type DiskUsage struct {
+	Total       uint64
+	Used        uint64
+	Free        uint64
+	UsedPercent string
+	Mountpoint  string
+}
+
 //按磁盘分区获取容量
-func DiskUsage() map[string]map[string]any {
-	diskUsage := map[string]map[string]any{}
+func NewDiskUsage() map[string]DiskUsage {
+	diskUsage := map[string]DiskUsage{}
 	diskPartitions := []string{}
 	OSType := runtime.GOOS
 	//if windows 获取Windows各个盘符
@@ -55,25 +64,30 @@ func DiskUsage() map[string]map[string]any {
 			diskPartitions = append(diskPartitions, i.Device)
 		}
 		//TODO 添加fstype
+		//TODO 添加opts
 		for _, i := range diskPartitions {
 			usage, _ := disk.Usage(i)
-			diskUsage[i] = map[string]any{}
-			diskUsage[i]["total"] = usage.Total
-			diskUsage[i]["used"] = usage.Used
-			diskUsage[i]["free"] = usage.Free
-			diskUsage[i]["usedPercent"] = uint64(usage.UsedPercent)
 
+			diskUsage[i] = DiskUsage{
+				Total:       usage.Total,
+				Used:        usage.Used,
+				Free:        usage.Free,
+				UsedPercent: strconv.FormatFloat(usage.UsedPercent, 'f', 2, 64),
+			}
 		}
 	} else if strings.ToLower(OSType) == "linux" {
 		partitions, _ := disk.Partitions(true)
 		for _, partition := range partitions {
-			diskUsage[partition.Device] = make(map[string]any)
 			usage, _ := disk.Usage(partition.Mountpoint)
-			diskUsage[partition.Device]["total"] = usage.Total
-			diskUsage[partition.Device]["used"] = usage.Used
-			diskUsage[partition.Device]["free"] = usage.Free
-			diskUsage[partition.Device]["usedPercent"] = uint64(usage.UsedPercent)
-			diskUsage[partition.Device]["mountPoint"] = partition.Mountpoint
+
+			diskUsage[partition.Device] = DiskUsage{
+				Total:       usage.Total,
+				Used:        usage.Used,
+				Free:        usage.Free,
+				UsedPercent: strconv.FormatFloat(usage.UsedPercent, 'f', 2, 64),
+				Mountpoint:  partition.Mountpoint,
+			}
+
 		}
 
 	}
@@ -98,18 +112,20 @@ func PrintDiskInfo() {
 }
 
 func PrintDiskUsage() {
-	diskUsage := DiskUsage()
-	for k, v := range diskUsage {
-		fmt.Print(k, "\t")
-		for i, j := range v {
-			if i == "usedPercent" {
-				fmt.Print(i, ":", j, "%\t")
-			} else if i == "mountPoint" {
-				fmt.Print(i, ":", j, "\t")
-			} else {
-				fmt.Print(i, ":", j.(uint64)/1024/1024, "MB\t")
-			}
-		}
-		fmt.Println()
-	}
+	diskUsage := NewDiskUsage()
+	o, _ := json.Marshal(diskUsage)
+	fmt.Println(string(o))
+	//for k, v := range diskUsage {
+	//	fmt.Print(k, "\t")
+	//	for i, j := range v {
+	//		if i == "usedPercent" {
+	//			fmt.Print(i, ":", j, "%\t")
+	//		} else if i == "mountPoint" {
+	//			fmt.Print(i, ":", j, "\t")
+	//		} else {
+	//			fmt.Print(i, ":", j.(uint64)/1024/1024, "MB\t")
+	//		}
+	//	}
+	//	fmt.Println()
+	//}
 }

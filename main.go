@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/Marushiru/iom_agent/device"
 )
 
 func main() {
@@ -27,5 +28,5 @@ func main() {
 	//fmt.Println("回车建退出。。。")
 	//var a string
 	//fmt.Scan(&a)
-	WebSocketClient()
+	fmt.Println(device.DiskInfo())
 }

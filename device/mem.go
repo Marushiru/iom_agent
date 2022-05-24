@@ -6,8 +6,7 @@ import (
 	"strconv"
 )
 
-func MemoryInfo() map[string]any {
-	var memoryInfoMap map[string]any = make(map[string]any)
+func NewMemoryInfo() *mem.VirtualMemoryStat {
 	/*
 		单位: Byte
 		total: 总内存
@@ -21,18 +20,16 @@ func MemoryInfo() map[string]any {
 		swapFree: swap分区可用
 	*/
 	memoryStat, err := mem.VirtualMemory()
-	if err == nil {
-		memoryInfoMap["memoryStat"] = memoryStat
-	} else {
+	if err != nil {
 		fmt.Println(err)
 		return nil
 	}
 
-	return memoryInfoMap
+	return memoryStat
 }
+
 func PrintMemoryInfo() {
-	memoryInfo := MemoryInfo()["memoryStat"]
-	memInfo := memoryInfo.(*mem.VirtualMemoryStat)
+	memInfo := NewMemoryInfo()
 	fmt.Println("总内存:  ", strconv.FormatFloat(float64(memInfo.Total)/1024/1024, 'f', 2, 32), "MB")
 	fmt.Println("已用内存: ", strconv.FormatFloat(float64(memInfo.Used)/1024/1024, 'f', 2, 32), "MB")
 	fmt.Println("剩余内存: ", strconv.FormatFloat(float64(memInfo.Available)/1024/1024, 'f', 2, 32), "MB")

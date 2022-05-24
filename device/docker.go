@@ -5,8 +5,11 @@ import (
 	"github.com/shirou/gopsutil/v3/docker"
 )
 
-func DockerInfo() {
-	dockerStat, _ := docker.GetDockerStat()
+func NewDockerInfo() []docker.CgroupDockerStat {
+	dockerStat, err := docker.GetDockerStat()
+	if err != nil {
+		fmt.Println(err)
+	}
 	//fmt.Println(dockerStat)
 	for index, docker := range dockerStat {
 		fmt.Println("-------DOCKER NO.", index, "-------")
@@ -16,6 +19,7 @@ func DockerInfo() {
 		fmt.Println("状态: ", docker.Status)
 		fmt.Println("是否运行中: ", docker.Running)
 	}
+	return dockerStat
 	//dockerIDList, _ := docker.GetDockerIDList()
 	//for _, id := range dockerIDList {
 	//	fmt.Println(id)
