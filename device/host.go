@@ -6,7 +6,6 @@ import (
 )
 
 func PrintHostInfo() {
-	HostInfo()
 	TemperatureInfo()
 }
 
@@ -26,7 +25,7 @@ func PrintHostInfo() {
 //	HostID               string `json:"hostid"`          主机ID// ex: uuid
 //}
 
-func HostInfo() *host.InfoStat {
+func NewHostInfo() *host.InfoStat {
 	//主机信息
 	hostInfo, err := host.Info()
 	if err != nil {

@@ -6,12 +6,6 @@ import (
 	"time"
 )
 
-func PrintNetInfo() {
-	IOCountersInfo()
-	NetInterfacesInfo()
-
-}
-
 //Family
 //AF_UNSPEC  = 0
 //AF_UNIX    = 1     本地通信
@@ -50,6 +44,8 @@ const (
 	//"unixpacket"：代表 Unix 通信域下的一种内部 socket 协议，以 SOCK_SEQPACKET 为 socket 类型。
 )
 
+//返回机子上所有kind协议的连接
+//暂时不知道用不用得着 留着把
 func NetConnection(kind string) []net.ConnectionStat {
 	conns, err := net.Connections(kind)
 	if err != nil {
@@ -58,6 +54,51 @@ func NetConnection(kind string) []net.ConnectionStat {
 	fmt.Println(conns)
 	return conns
 }
+
+//type InterfaceStat struct {
+//	Index        int             `json:"index"`        // 大概是个ID之类的东西
+//	MTU          int             `json:"mtu"`          // 最大传输单元   maximum transmission unit
+//	Name         string          `json:"name"`         // 接口名        e.g., "en0", "lo0", "eth0.100"
+//	HardwareAddr string          `json:"hardwareaddr"` // MAC地址       IEEE MAC-48, EUI-48 and EUI-64 form
+//	Flags        []string        `json:"flags"`        // 标识？大概是支持的功能     e.g., FlagUp, FlagLoopback, FlagMulticast
+//	Addrs        []InterfaceAddr `json:"addrs"`        // 其他地址
+//}
+//这个接口返回所有固定信息
+
+func NewNetInterfacesInfo() net.InterfaceStatList {
+	//返回所有网络接口信息
+	fmt.Println("网络接口信息")
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		fmt.Println(err)
+	}
+	for _, j := range interfaces {
+		fmt.Println("ID：", j.Index, "\t\t")
+		fmt.Println("接口名：", j.Name, "\t")
+		fmt.Println("最大传输单元：", j.MTU, "\t")
+		fmt.Println("标识：", j.Flags, "\t")
+		fmt.Println("MAC地址：", j.HardwareAddr, "\t\t")
+		fmt.Println("其他地址：", j.Addrs, "\t\t")
+		fmt.Println()
+	}
+	return interfaces
+}
+
+//type IOCountersStat struct {
+//	Name        string `json:"name"`        //接口名   interface name
+//	BytesSent   uint64 `json:"bytesSent"`   //发送字节 number of bytes sent
+//	BytesRecv   uint64 `json:"bytesRecv"`   //接收字节 number of bytes received
+//	PacketsSent uint64 `json:"packetsSent"` //发送包   number of packets sent
+//	PacketsRecv uint64 `json:"packetsRecv"` //接收包   number of packets received
+//	Errin       uint64 `json:"errin"`       //发送错误 total number of errors while receiving
+//	Errout      uint64 `json:"errout"`      //接受错误 total number of errors while sending
+//	Dropin      uint64 `json:"dropin"`      //发送丢包 total number of incoming packets which were dropped
+//	Dropout     uint64 `json:"dropout"`     //接收丢包 total number of outgoing packets which were dropped (always 0 on OSX and BSD)
+//	Fifoin      uint64 `json:"fifoin"`      //FIFO缓存发送错误 total number of FIFO buffers errors while receiving
+//	Fifoout     uint64 `json:"fifoout"`     //FIFO缓存接受错误 total number of FIFO buffers errors while sending
+//}
+//TODO
+//这个方法也是要按照时间调用的
 
 func IOCountersInfo() []net.IOCountersStat {
 	counter, err := net.IOCounters(true)
@@ -82,34 +123,6 @@ func IOCountersInfo() []net.IOCountersStat {
 	return counter
 }
 
-//type InterfaceStat struct {
-//	Index        int             `json:"index"`        // 大概是个ID之类的东西
-//	MTU          int             `json:"mtu"`          // 最大传输单元   maximum transmission unit
-//	Name         string          `json:"name"`         // 接口名        e.g., "en0", "lo0", "eth0.100"
-//	HardwareAddr string          `json:"hardwareaddr"` // MAC地址       IEEE MAC-48, EUI-48 and EUI-64 form
-//	Flags        []string        `json:"flags"`        // 标识？大概是支持的功能     e.g., FlagUp, FlagLoopback, FlagMulticast
-//	Addrs        []InterfaceAddr `json:"addrs"`        // 其他地址
-//}
-
-//返回所有网络接口信息
-func NetInterfacesInfo() net.InterfaceStatList {
-	fmt.Println("网络接口信息")
-	interfaces, err := net.Interfaces()
-	if err != nil {
-		fmt.Println(err)
-	}
-	for _, j := range interfaces {
-		fmt.Println("ID：", j.Index, "\t\t")
-		fmt.Println("接口名：", j.Name, "\t")
-		fmt.Println("最大传输单元：", j.MTU, "\t")
-		fmt.Println("标识：", j.Flags, "\t")
-		fmt.Println("MAC地址：", j.HardwareAddr, "\t\t")
-		fmt.Println("其他地址：", j.Addrs, "\t\t")
-		fmt.Println()
-	}
-	return interfaces
-}
-
 type NetworkIORates struct {
 	BytesSent uint64
 	BytesRecv uint64
@@ -121,20 +134,6 @@ func NewNetworkIORates(sent uint64, recv uint64) NetworkIORates {
 		BytesRecv: recv,
 	}
 }
-
-//type IOCountersStat struct {
-//	Name        string `json:"name"`        //接口名   interface name
-//	BytesSent   uint64 `json:"bytesSent"`   //发送字节 number of bytes sent
-//	BytesRecv   uint64 `json:"bytesRecv"`   //接收字节 number of bytes received
-//	PacketsSent uint64 `json:"packetsSent"` //发送包   number of packets sent
-//	PacketsRecv uint64 `json:"packetsRecv"` //接收包   number of packets received
-//	Errin       uint64 `json:"errin"`       //发送错误 total number of errors while receiving
-//	Errout      uint64 `json:"errout"`      //接受错误 total number of errors while sending
-//	Dropin      uint64 `json:"dropin"`      //发送丢包 total number of incoming packets which were dropped
-//	Dropout     uint64 `json:"dropout"`     //接收丢包 total number of outgoing packets which were dropped (always 0 on OSX and BSD)
-//	Fifoin      uint64 `json:"fifoin"`      //FIFO缓存发送错误 total number of FIFO buffers errors while receiving
-//	Fifoout     uint64 `json:"fifoout"`     //FIFO缓存接受错误 total number of FIFO buffers errors while sending
-//}
 
 func NetworkIORate() {
 	//pernic设置为false则为计算返回所有接口的

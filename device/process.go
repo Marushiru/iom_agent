@@ -34,7 +34,12 @@ type ProcessBase struct {
 
 }
 
-func ListProcesses() []ProcessBase {
+//TODO
+//process内的两个new方法不会做持久化
+//对于某些特定的需要监控的线程服务器会发对应的Pid，那部分的数据需要持续监控
+
+//所有process的基础信息，列表展示的那种
+func NewProcesses() []ProcessBase {
 	proc, err := process.Processes()
 	if err != nil {
 		fmt.Println(err)
@@ -60,14 +65,7 @@ func ListProcesses() []ProcessBase {
 	return pros
 }
 
-func GetProcIOInfo(pro *process.Process) *process.IOCountersStat {
-	//返回应用网络流量使用情况？
-	ioCounter, _ := pro.IOCounters()
-	fmt.Println("流量使用情况：", ioCounter)
-	return ioCounter
-
-}
-
+//peocess的详细信息，哪来显示在详情页的那种
 func NewProcessBase(pro *process.Process) ProcessBase {
 	var proInfo ProcessBase
 	proInfo.Pid = pro
@@ -93,6 +91,16 @@ func NewProcessBase(pro *process.Process) ProcessBase {
 	//子进程，返回process切片
 	proInfo.Children, _ = pro.Children()
 	return proInfo
+}
+
+//TODO
+//下面四个方法大概都需要写成按照时间调用的样子
+
+func GetProcIOInfo(pro *process.Process) *process.IOCountersStat {
+	//返回应用网络流量使用情况？
+	ioCounter, _ := pro.IOCounters()
+	fmt.Println("流量使用情况：", ioCounter)
+	return ioCounter
 }
 
 func ProcCpuPercent(pro *process.Process) {
