@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/Marushiru/iom_agent/websocket"
-	"github.com/gin-gonic/gin"
+	"fmt"
+	"github.com/Marushiru/iom_agent/device"
 )
 
 func main() {
+
 	//fmt.Println("==============================================MEM===============================================")
 	//device.PrintMemoryInfo()
 	//fmt.Println("==============================================DISK==============================================")
@@ -17,14 +18,15 @@ func main() {
 	//fmt.Println("==============================================HOST==============================================")
 	//device.PrintHostInfo()
 	//fmt.Println("==============================================NET===============================================")
-	//device.PrintNetInfo()
-	//fmt.Println("==============================================PROCESS==============================================")
-	//device.ProcessInfo()
-	//if device.OSInfo() == "windows" {
-	//	fmt.Println("==============================================WINSERVICES==============================================")
-	//	device.WinServicesInfo()
-	//}
-	r := gin.Default()
-	r.GET("/ping", websocket.Ping)
-	r.Run(":8888")
+	//device.NetConnection(device.KIND_TCP)
+	fmt.Println("==============================================PROCESS==============================================")
+	device.NetworkIORate()
+	////if device.OSInfo() == "windows" {
+	////	fmt.Println("==============================================WINSERVICES==============================================")
+	////	device.WinServicesInfo()
+	////}
+	//fmt.Println("回车建退出。。。")
+	//var a string
+	//fmt.Scan(&a)
+	//WebSocketClient()
 }
