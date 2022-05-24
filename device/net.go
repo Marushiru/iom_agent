@@ -12,6 +12,53 @@ func PrintNetInfo() {
 
 }
 
+//Family
+//AF_UNSPEC  = 0
+//AF_UNIX    = 1     本地通信
+//AF_INET    = 2
+//AF_INET6   = 23
+//AF_NETBIOS = 17
+
+//Type
+//SOCK_STREAM    = 1
+//SOCK_DGRAM     = 2
+//SOCK_RAW       = 3
+//SOCK_SEQPACKET = 5
+
+//type ConnectionStat struct {
+//	Fd     uint32  `json:"fd"`         文件描述符？？？
+//	Family uint32  `json:"family"`     套接口地址结构的类型？？限制能发什么或者能收什么
+//	Type   uint32  `json:"type"`       socket类型
+//	Laddr  Addr    `json:"localaddr"`  本地地址
+//	Raddr  Addr    `json:"remoteaddr"` 远程地址
+//	Status string  `json:"status"`     状态 listen之类的
+//	Uids   []int32 `json:"uids"`       用户？谁打开的这个程序？
+//	Pid    int32   `json:"pid"`        程序Pid
+//}
+
+const (
+	//kind
+	KIND_ALL  = "all"  //代表 TCP 协议，其基于的 IP 协议的版本根据参数address的值自适应。
+	KIND_TCP  = "tcp"  //代表 TCP 协议，其基于的 IP 协议的版本根据参数address的值自适应。
+	KIND_TCP4 = "tcp4" //代表基于 IP 协议第四版的 TCP 协议。
+	KIND_TCP6 = "tcp6" //代表基于 IP 协议第六版的 TCP 协议。
+	KIND_UDP  = "udp"  //代表 UDP 协议，其基于的 IP 协议的版本根据参数address的值自适应。
+	KIND_UDP4 = "udp4" //代表基于 IP 协议第四版的 UDP 协议。
+	KIND_UDP6 = "udp6" //代表基于 IP 协议第六版的 UDP 协议。
+	KIND_UNIX = "unix" //代表 Unix 通信域下的一种内部 socket 协议，以 SOCK_STREAM 为 socket 类型。
+	//"unixgram"：代表 Unix 通信域下的一种内部 socket 协议，以 SOCK_DGRAM 为 socket 类型。
+	//"unixpacket"：代表 Unix 通信域下的一种内部 socket 协议，以 SOCK_SEQPACKET 为 socket 类型。
+)
+
+func NetConnection(kind string) []net.ConnectionStat {
+	conns, err := net.Connections(kind)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(conns)
+	return conns
+}
+
 func IOCountersInfo() []net.IOCountersStat {
 	counter, err := net.IOCounters(true)
 	if err != nil {
@@ -43,6 +90,7 @@ func IOCountersInfo() []net.IOCountersStat {
 //	Flags        []string        `json:"flags"`        // 标识？大概是支持的功能     e.g., FlagUp, FlagLoopback, FlagMulticast
 //	Addrs        []InterfaceAddr `json:"addrs"`        // 其他地址
 //}
+
 //返回所有网络接口信息
 func NetInterfacesInfo() net.InterfaceStatList {
 	fmt.Println("网络接口信息")
@@ -110,6 +158,7 @@ func NetworkIORate() {
 		}
 		last = ioCounters
 		fmt.Println(networkIOCountMap)
+
 		time.Sleep(1000000000)
 	}
 }

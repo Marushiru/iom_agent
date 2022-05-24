@@ -14,11 +14,11 @@ func PrintHostInfo() {
 //	Hostname             string `json:"hostname"`        主机名字
 //	Uptime               uint64 `json:"uptime"`          使用时间
 //	BootTime             uint64 `json:"bootTime"`        开机时间
-//	Procs                uint64 `json:"procs"`           进程数量// number of processes
-//	OS                   string `json:"os"`              操作系统// ex: freebsd, linux
-//	Platform             string `json:"platform"`        平台   // ex: ubuntu, linuxmint
-//	PlatformFamily       string `json:"platformFamily"`  平台系列？// ex: debian, rhel
-//	PlatformVersion      string `json:"platformVersion"` 平台版本// version of the complete OS
+//	Procs                uint64 `json:"procs"`           进程数量	// number of processes
+//	OS                   string `json:"os"`              操作系统	// ex: freebsd, linux
+//	Platform             string `json:"platform"`        平台   		// ex: ubuntu, linuxmint
+//	PlatformFamily       string `json:"platformFamily"`  平台系列？	// ex: debian, rhel
+//	PlatformVersion      string `json:"platformVersion"` 平台版本	// version of the complete OS
 //	KernelVersion        string `json:"kernelVersion"`   操作系统核心版本// version of the OS kernel (if available)
 //	KernelArch           string `json:"kernelArch"`      操作系统核心架构// native cpu architecture queried at runtime, as returned by `uname -m` or empty string in case of error
 //	VirtualizationSystem string `json:"virtualizationSystem"`     虚拟系统？目前没见返回过
