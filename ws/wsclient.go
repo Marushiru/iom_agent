@@ -13,6 +13,10 @@ import (
 
 var addr = flag.String("addr", "127.0.0.1:8888", "http service addr")
 
+func EventResponse() {
+
+}
+
 func WebSocketClient() {
 	flag.Parse()
 	log.SetFlags(0)
@@ -20,12 +24,12 @@ func WebSocketClient() {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
-	u := url.URL{Scheme: "ws", Host: *addr, Path: "/ping"}
+	u := url.URL{Scheme: "ws", Host: *addr, Path: "/"}
 	log.Printf("connecting to %s", u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
-		log.Fatal("dial", err)
+		log.Fatal("dial\t", err)
 	}
 	defer c.Close()
 
@@ -50,7 +54,8 @@ func WebSocketClient() {
 		case <-done:
 			return
 		case t := <-ticker.C:
-			err := c.WriteMessage(websocket.TextMessage, []byte(t.String()))
+			t = t
+			err := c.WriteMessage(websocket.TextMessage, []byte("you have a new message"))
 			if err != nil {
 				log.Println("write:", err)
 				return

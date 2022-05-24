@@ -1,7 +1,7 @@
 package main
 
-import "github.com/Marushiru/iom_agent/device"
+import "github.com/Marushiru/iom_agent/ws"
 
 func main() {
-	device.PrintDiskUsage()
+	ws.WebSocketClient()
 }
