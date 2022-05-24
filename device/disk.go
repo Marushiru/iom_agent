@@ -62,15 +62,19 @@ func DiskUsage() map[string]map[string]any {
 			diskUsage[i]["used"] = usage.Used
 			diskUsage[i]["free"] = usage.Free
 			diskUsage[i]["usedPercent"] = uint64(usage.UsedPercent)
+
 		}
 	} else if strings.ToLower(OSType) == "linux" {
-		//获取 "/" 目录下所有文件(夹)名
-		diskUsage["/"] = make(map[string]any)
-		usage, _ := disk.Usage("/")
-		diskUsage["/"]["total"] = usage.Total
-		diskUsage["/"]["used"] = usage.Used
-		diskUsage["/"]["free"] = usage.Free
-		diskUsage["/"]["usedPercent"] = uint64(usage.UsedPercent)
+		partitions, _ := disk.Partitions(true)
+		for _, partition := range partitions {
+			diskUsage[partition.Device] = make(map[string]any)
+			usage, _ := disk.Usage(partition.Mountpoint)
+			diskUsage[partition.Device]["total"] = usage.Total
+			diskUsage[partition.Device]["used"] = usage.Used
+			diskUsage[partition.Device]["free"] = usage.Free
+			diskUsage[partition.Device]["usedPercent"] = uint64(usage.UsedPercent)
+			diskUsage[partition.Device]["mountPoint"] = partition.Mountpoint
+		}
 
 	}
 	//fmt.Println(diskUsage)
@@ -90,5 +94,22 @@ func PrintDiskInfo() {
 	partitionSlice := partition.([]disk.PartitionStat)
 	for _, de := range partitionSlice {
 		fmt.Println("盘符:", de.Device, "\t文件系统: ", de.Fstype)
+	}
+}
+
+func PrintDiskUsage() {
+	diskUsage := DiskUsage()
+	for k, v := range diskUsage {
+		fmt.Print(k, "\t")
+		for i, j := range v {
+			if i == "usedPercent" {
+				fmt.Print(i, ":", j, "%\t")
+			} else if i == "mountPoint" {
+				fmt.Print(i, ":", j, "\t")
+			} else {
+				fmt.Print(i, ":", j.(uint64)/1024/1024, "MB\t")
+			}
+		}
+		fmt.Println()
 	}
 }
