@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/Marushiru/iom_agent/device"
 )
 
 func main() {
@@ -20,7 +19,7 @@ func main() {
 	//fmt.Println("==============================================NET===============================================")
 	//device.NetConnection(device.KIND_TCP)
 	fmt.Println("==============================================PROCESS==============================================")
-	device.NetworkIORate()
+	//device.NetworkIORate()
 	////if device.OSInfo() == "windows" {
 	////	fmt.Println("==============================================WINSERVICES==============================================")
 	////	device.WinServicesInfo()
@@ -28,5 +27,5 @@ func main() {
 	//fmt.Println("回车建退出。。。")
 	//var a string
 	//fmt.Scan(&a)
-	//WebSocketClient()
+	WebSocketClient()
 }

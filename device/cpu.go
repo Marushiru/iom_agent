@@ -18,6 +18,21 @@ func PrintCpuInfo() {
 	CpuUsagePercentage(1000000000)
 	fmt.Println()
 }
+
+type CpuBaseInfo struct {
+	PhysicalCores int
+	LogicalCores  int
+	CpuInfoStats  []cpu.InfoStat
+}
+
+func NewCpuBaseInfo() *CpuBaseInfo {
+	return &CpuBaseInfo{
+		PhysicalCores: PhysicalCores(),
+		LogicalCores:  LogicalCores(),
+		CpuInfoStats:  CpuInfo(),
+	}
+}
+
 func PhysicalCores() int {
 	//获取Cpu实体核心数量
 	physicalCores, err := cpu.Counts(false)
@@ -72,7 +87,8 @@ func CpuInfo() []cpu.InfoStat {
 	return infoStats
 }
 
-//TODO
+// TODO
+// Cpu的使用率需要按照时间定时传给服务器
 func CpuUsagePercentage(duration time.Duration) []float64 {
 	//获取Cpu使用百分比
 	//其中interval单位是1纳秒
