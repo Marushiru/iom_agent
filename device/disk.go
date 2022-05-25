@@ -42,11 +42,11 @@ func DiskInfo() map[string]any {
 }
 
 type DiskUsage struct {
-	Total       uint64
-	Used        uint64
-	Free        uint64
-	UsedPercent string
-	Mountpoint  string
+	Total       uint64 `json:"total"`
+	Used        uint64 `json:"used"`
+	Free        uint64 `json:"free"`
+	UsedPercent string `json:"usedPercent"`
+	Mountpoint  string `json:"mountpoint"`
 }
 
 //按磁盘分区获取容量

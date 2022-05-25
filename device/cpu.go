@@ -20,9 +20,9 @@ func PrintCpuInfo() {
 }
 
 type CpuBaseInfo struct {
-	PhysicalCores int
-	LogicalCores  int
-	CpuInfoStats  []cpu.InfoStat
+	PhysicalCores int            `json:"physicalCores"`
+	LogicalCores  int            `json:"logicalCores"`
+	CpuInfoStats  []cpu.InfoStat `json:"cpuInfoStats"`
 }
 
 func NewCpuBaseInfo() *CpuBaseInfo {
@@ -89,6 +89,8 @@ func CpuInfo() []cpu.InfoStat {
 
 // TODO
 // Cpu的使用率需要按照时间定时传给服务器
+// percpu参数false则只会返回一个数字描述CPU总使用率，true则每个cpu核心都返回
+// duration会等待固定事件后返回Cpu期间使用率，单位为纳秒，设置为0则以上一次调用时间为起点到现在计算
 func CpuUsagePercentage(duration time.Duration) []float64 {
 	//获取Cpu使用百分比
 	//其中interval单位是1纳秒

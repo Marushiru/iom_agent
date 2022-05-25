@@ -31,7 +31,6 @@ type ProcessBase struct {
 	Exe         string                  //执行文件路径
 	Parent      *process.Process        //父进程
 	Children    []*process.Process      //子进程
-
 }
 
 //TODO
@@ -96,6 +95,13 @@ func NewProcessBase(pro *process.Process) ProcessBase {
 //TODO
 //下面四个方法大概都需要写成按照时间调用的样子
 
+type IOCountersStat struct {
+	ReadCount  uint64 `json:"readCount"`
+	WriteCount uint64 `json:"writeCount"`
+	ReadBytes  uint64 `json:"readBytes"`
+	WriteBytes uint64 `json:"writeBytes"`
+}
+
 func GetProcIOInfo(pro *process.Process) *process.IOCountersStat {
 	//返回应用网络流量使用情况？
 	ioCounter, _ := pro.IOCounters()
@@ -109,11 +115,15 @@ func ProcCpuPercent(pro *process.Process) {
 	fmt.Println("Cpu占用率：" + strconv.FormatFloat(cpuPercent, 'f', 2, 64))
 }
 
-func ProcMemoryInfo(pro *process.Process) {
-	//返回应用网络流量使用情况？
-	ioCounters, _ := pro.IOCounters()
-	fmt.Println("流量使用情况：", ioCounters)
-}
+//type MemoryInfoStat struct {
+//	RSS    uint64 `json:"rss"`    // bytes
+//	VMS    uint64 `json:"vms"`    // bytes
+//	HWM    uint64 `json:"hwm"`    // bytes
+//	Data   uint64 `json:"data"`   // bytes
+//	Stack  uint64 `json:"stack"`  // bytes
+//	Locked uint64 `json:"locked"` // bytes
+//	Swap   uint64 `json:"swap"`   // bytes
+//}
 
 func ProcMemoryPercent(pro *process.Process) {
 	//进程使用的内存，rss用掉的物理内存，vms用掉的虚拟内存
